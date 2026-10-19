@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+
+.env
+.dvc/config.local
+
+mlruns/
+mlartifacts/
+mlflow.db
