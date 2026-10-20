@@ -1,0 +1,10 @@
+.venv/
+.git/
+.dvc/cache/
+data/
+models/
+mlruns/
+mlartifacts/
+__pycache__/
+*.pyc
+.env
