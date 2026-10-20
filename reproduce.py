@@ -44,7 +44,7 @@ def main():
     try:
         sh("git", "checkout", "--quiet", commit)
 
-        sh("dvc", "checkout", "--force")
+        sh("dvc", "checkout", "--force", "data/raw/jailbreak.csv.dvc")
         md5 = yaml.safe_load(open("data/raw/jailbreak.csv.dvc"))["outs"][0]["md5"]
         print("raw data md5 matches the run:", md5 == old.data.tags["dvc_raw_md5"])
 
