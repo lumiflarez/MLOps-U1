@@ -1,0 +1,34 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+      - data/raw/jailbreak.csv
+    params:
+      - prepare
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/processed/train.csv
+    params:
+      - train
+    outs:
+      - models/model.pkl
+      - models/run_id.txt:
+          cache: false
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - models/model.pkl
+      - models/run_id.txt
+      - data/processed/test.csv
+    metrics:
+      - metrics.json:
+          cache: false
