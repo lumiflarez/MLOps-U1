@@ -1,0 +1,78 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: data/raw/jailbreak.csv
+      hash: md5
+      md5: d850c61419c9db9f88cccbcff7ba0d73
+      size: 1679485
+    - path: src/prepare.py
+      hash: md5
+      md5: 58b33e96b47152da1c84abff70461275
+      size: 754
+    params:
+      params.yaml:
+        prepare:
+          test_size: 0.2
+          random_seed: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 99c6dcd7b5386628e21d151a60166b92
+      size: 308061
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 2339221796b208f8e627c1bd2e307f51
+      size: 1338675
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 2339221796b208f8e627c1bd2e307f51
+      size: 1338675
+    - path: src/train.py
+      hash: md5
+      md5: f3a6cd6dee700feaafb1bcae175a6e7d
+      size: 2000
+    params:
+      params.yaml:
+        train:
+          max_features: 5000
+          ngram_max: 1
+          C: 1.0
+          random_seed: 42
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 029bdd9241bf6e0931d14e4b1bf49bbd
+      size: 224788
+    - path: models/run_id.txt
+      hash: md5
+      md5: 32a8f8eba01c39300a88df8b0d085216
+      size: 33
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 99c6dcd7b5386628e21d151a60166b92
+      size: 308061
+    - path: models/model.pkl
+      hash: md5
+      md5: 029bdd9241bf6e0931d14e4b1bf49bbd
+      size: 224788
+    - path: models/run_id.txt
+      hash: md5
+      md5: 32a8f8eba01c39300a88df8b0d085216
+      size: 33
+    - path: src/evaluate.py
+      hash: md5
+      md5: bd365c208828ecc8a4989cae69dc4577
+      size: 956
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: e8d2f035b75bbe85142b7d4323755f0c
+      size: 131
