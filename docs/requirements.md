@@ -1,6 +1,6 @@
-# Jailbreak Prompt Detection - Requirements v1.0
+# Jailbreak Prompt Detection - Requirements v1.1
 
-Version: 1.0
+Version: 1.1
 Date: 2026-10-21
 Author: Saule Gylyte
 
@@ -28,8 +28,12 @@ This project builds the core of such a filter: a **classifier model** that label
 | NFR-03 | Quality | Balanced overall quality | F1 >= 0.95 |
 | NFR-04 | Generalisation | No strong overfitting | train_accuracy - test_accuracy <= 0.03 | 
 | NFR-05 | Performance | Full pipeline runs fast on CPU | <= 2 min | 
+| NFR-06 | Reproducibility | A past run is rebuilt with `reproduce.py` | < 2 min and metric delta <= 0.005 | 
+| NFR-07 | Traceability | Every run is linked to its code and data | 100 % of runs tagged `git_commit` + `dvc_raw_md5` | 
+| NFR-08 | Tracking | Runs are stored in the cluster MLflow | 100 % of runs in cluster |
 
 ## 4. Change history
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-10-21 | Saule Gylyte | Initial document: problem, FR-01..04, NFR-01..05 |
+| 1.1 | 2026-10-21 | Saule Gylyte | NFR-06..08 |
