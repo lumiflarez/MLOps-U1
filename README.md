@@ -1,4 +1,4 @@
-# MLOps U1 - Jailbreak Prompt Detection
+# MLOps U1+U2 - Jailbreak Prompt Detection
 
 ## Run from scratch
 
@@ -37,6 +37,36 @@ data from Hugging Face:
     dvc repro                      # prepare -> train -> evaluate, run logged to cluster MLflow
     python reproduce.py <run_id>   # reproduce a run; take the run ID from your MLflow UI
 
+### 5. Hyperparameter search (Optuna) and model registry
+    python src/hpo.py                      # 20 Optuna trials as nested MLflow runs under "optuna-hpo"
+    # copy best params from the "optuna-hpo" run into params.yaml, then:
+    dvc repro                              # final model with the best params
+    python scripts/register_model.py       # registers the model as "jailbreak-detector" and sets @champion
+
+### 6. Training Job in the cluster
+    GIT_SHA=$(git rev-parse --short=8 HEAD)
+    docker build -f docker/Dockerfile.train --build-arg GIT_COMMIT=$GIT_SHA -t jailbreak-train:sha-$GIT_SHA .
+    kind load docker-image jailbreak-train:sha-$GIT_SHA --name mlops-u1
+    # set the same tag in k8s/train-job.yaml (image: jailbreak-train:sha-...)
+
+    kubectl create secret generic mlflow-credentials -n mlops \
+      --from-literal=MLFLOW_TRACKING_USERNAME=trainer \
+      --from-literal=MLFLOW_TRACKING_PASSWORD=<choose-a-password>
+
+    kubectl apply -f k8s/train-configmap.yaml
+    kubectl delete job jailbreak-train -n mlops --ignore-not-found #delete old job is there is one
+    kubectl apply -f k8s/train-job.yaml
+    kubectl logs -f job/jailbreak-train -n mlops
+    kubectl get job jailbreak-train -n mlops      # STATUS Complete, COMPLETIONS 1/1
+
+    # To train with different hyperparameters, edit `params.yaml`, regenerate the ConfigMap and rerun the Job
+    kubectl create configmap train-config -n mlops --from-file=params.yaml \
+      --from-literal=MLFLOW_TRACKING_URI=http://mlflow.mlops.svc:5000 \
+      --dry-run=client -o yaml > k8s/train-configmap.yaml
+    kubectl apply -f k8s/train-configmap.yaml
+    kubectl delete job jailbreak-train -n mlops --ignore-not-found
+    kubectl apply -f k8s/train-job.yaml
+
 ## Ports and logins
 | Service | Address | Login |
 |---|---|---|
@@ -47,3 +77,7 @@ data from Hugging Face:
 - MLflow UI, experiment `jailbreak-detection`: runs with parameters, metrics , tags, model
 - `metrics.json`: test metrics of the current version
 - `kubectl get all -n mlops`: MLflow and PostgreSQL in the cluster
+- MLflow UI, run `optuna-hpo`: expand it to see the nested trial runs (HPO tree)
+- MLflow UI → Model registry → `jailbreak-detector`: versions and the `@champion` alias
+- `kubectl get job,pods -n mlops -l app=jailbreak-train`: training Job status
+- `docs/train-job.log`: saved log of a successful training Job

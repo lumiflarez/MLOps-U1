@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  MLFLOW_TRACKING_URI: http://mlflow.mlops.svc:5000
+  params.yaml: |-
+    prepare:
+      test_size: 0.2
+      random_seed: 42
+
+    train:
+      max_features: 10000
+      ngram_max: 3
+      C: 534.219662410675
+      random_seed: 42
+kind: ConfigMap
+metadata:
+  name: train-config
+  namespace: mlops

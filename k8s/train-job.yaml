@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jailbreak-train
+  namespace: mlops
+  labels:
+    app: jailbreak-train
+spec:
+  backoffLimit: 1                  
+  ttlSecondsAfterFinished: 86400   
+  template:
+    metadata:
+      labels:
+        app: jailbreak-train
+    spec:
+      restartPolicy: Never         
+      securityContext:
+        runAsNonRoot: true        
+        runAsUser: 1000
+      containers:
+        - name: trainer
+          image: jailbreak-train:sha-518c3740
+          imagePullPolicy: IfNotPresent  
+          env:
+            - name: MLFLOW_TRACKING_URI   
+              valueFrom:
+                configMapKeyRef:
+                  name: train-config
+                  key: MLFLOW_TRACKING_URI
+          envFrom:
+            - secretRef:                  
+                name: mlflow-credentials
+          volumeMounts:
+            - name: params                
+              mountPath: /app/params.yaml
+              subPath: params.yaml
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+      volumes:
+        - name: params
+          configMap:
+            name: train-config
