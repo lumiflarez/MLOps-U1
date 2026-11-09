@@ -5,5 +5,5 @@ prepare:
 train:
   max_features: 5000
   ngram_max: 1
-  C: 0.01
+  C: 1.0
   random_seed: 42
