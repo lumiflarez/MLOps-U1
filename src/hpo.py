@@ -30,9 +30,9 @@ def main() -> None:
 
     def objective(trial: optuna.Trial) -> float:
         params = {
-            "C": trial.suggest_float("C", 0.01, 100.0, log=True),
-            "max_features": trial.suggest_categorical("max_features", [1000, 2000, 5000, 10000]),
-            "ngram_max": trial.suggest_int("ngram_max", 1, 2),
+            "C": trial.suggest_float("C", 0.01, 1000.0, log=True),
+            "max_features": trial.suggest_categorical("max_features", [2000, 5000, 10000, 20000, 50000]),
+            "ngram_max": trial.suggest_int("ngram_max", 1, 3),
             "random_seed": seed,
         }
         with mlflow.start_run(run_name=f"trial-{trial.number:02d}", nested=True):
@@ -58,9 +58,9 @@ def main() -> None:
             "n_trials": args.n_trials,
             "cv_folds": args.cv_folds,
             "sampler": "TPE",
-            "space_C": "0.01-100 log",
-            "space_max_features": "1000,2000,5000,10000",
-            "space_ngram_max": "1-2",
+            "space_C": "0.01-1000 log",
+            "space_max_features": "2000,5000,10000,20000,50000",
+            "space_ngram_max": "1-3",
         })
         mlflow.log_input(mlflow.data.from_pandas(
             train, source="data/processed/train.csv",
