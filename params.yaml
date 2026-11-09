@@ -3,7 +3,7 @@ prepare:
   random_seed: 42
 
 train:
-  max_features: 5000
-  ngram_max: 1
-  C: 1.0
+  max_features: 10000
+  ngram_max: 3
+  C: 534.219662410675
   random_seed: 42
