@@ -1,13 +1,22 @@
 FROM python:3.10-slim
 
-RUN useradd --create-home --uid 1000 app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-train.txt .
+RUN pip install --no-cache-dir -r requirements-train.txt
 
 COPY src/ src/
-COPY params.yaml dvc.yaml ./
+COPY params.yaml .
+COPY data/raw/jailbreak.csv data/raw/jailbreak.csv
+COPY data/raw/jailbreak.csv.dvc data/raw/jailbreak.csv.dvc
 
-USER app
-CMD ["python", "src/train.py"]
+ARG GIT_COMMIT=unknown
+ENV GIT_COMMIT=${GIT_COMMIT}
+
+RUN useradd --create-home --uid 1000 trainer && chown -R trainer /app
+USER 1000
+
+CMD ["sh", "-c", "python src/prepare.py && python src/train.py && python src/evaluate.py"]
