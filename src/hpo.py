@@ -91,5 +91,6 @@ def main() -> None:
         print(f"Geriausias bandymas #{study.best_trial.number}: "
               f"cv_accuracy={study.best_value:.4f} params={study.best_params}")
 
+
 if __name__ == "__main__":
     main()

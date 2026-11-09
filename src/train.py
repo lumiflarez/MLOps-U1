@@ -97,5 +97,6 @@ def main() -> None:
         print(f"run_id={run.info.run_id} model_id={info.model_id} "
               f"train_accuracy={train_acc:.4f}")
 
+
 if __name__ == "__main__":
     main()
