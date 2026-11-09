@@ -53,6 +53,7 @@ spec:
             - --host=0.0.0.0
             - --port=5000
             - --workers=1
+            - --allowed-hosts=localhost:*,127.0.0.1:*,mlflow:*,mlflow.mlops.svc:*,mlflow.mlops.svc.cluster.local:*
           ports:
             - containerPort: 5000
           volumeMounts:
