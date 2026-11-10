@@ -4,7 +4,7 @@ import pandas as pd
 import yaml
 from sklearn.model_selection import train_test_split
 
-params = yaml.safe_load(open("params.yaml"))["prepare"]
+params = yaml.safe_load(Path("params.yaml").read_text())["prepare"]
 
 df = pd.read_csv("data/raw/jailbreak.csv")
 

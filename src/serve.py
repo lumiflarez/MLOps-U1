@@ -23,7 +23,7 @@ def load_champion() -> None:
 async def lifespan(app: FastAPI):
     try:
         load_champion()
-    except Exception as exc:          
+    except Exception as exc:  # noqa: BLE001 - bet kokia klaida -> /health 503
         state["error"] = str(exc)
     yield
 

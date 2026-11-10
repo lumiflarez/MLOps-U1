@@ -1,15 +1,17 @@
 import argparse
 import os
+from pathlib import Path
 
 import mlflow
+import mlflow.sklearn
 import optuna
 import pandas as pd
 import yaml
-from sklearn.model_selection import StratifiedKFold, cross_val_score
-import mlflow.sklearn
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 from train import EXPERIMENT, build_model, data_md5, git_commit, log_learning_curve
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -17,7 +19,7 @@ def main() -> None:
     parser.add_argument("--cv-folds", type=int, default=3)
     args = parser.parse_args()
 
-    seed = yaml.safe_load(open("params.yaml"))["train"]["random_seed"]
+    seed = yaml.safe_load(Path("params.yaml").read_text())["train"]["random_seed"]
 
     mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000"))
     mlflow.set_experiment(EXPERIMENT)

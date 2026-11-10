@@ -23,14 +23,14 @@ def git_commit() -> str:
         return subprocess.check_output(
             ["git", "rev-parse", "--short=8", "HEAD"],
             text=True, stderr=subprocess.DEVNULL).strip()
-    except Exception:
+    except (subprocess.CalledProcessError, OSError):
         return "unknown"
 
 def data_md5() -> str:
     try:
-        pointer = yaml.safe_load(open("data/raw/jailbreak.csv.dvc"))
+        pointer = yaml.safe_load(Path("data/raw/jailbreak.csv.dvc").read_text())
         return pointer["outs"][0]["md5"]
-    except Exception:
+    except (OSError, KeyError, IndexError, TypeError):
         return "untracked"
 
 def build_model(params: dict) -> Pipeline:
@@ -58,7 +58,7 @@ def log_learning_curve(params: dict, x: pd.Series, y: pd.Series) -> None:
                           accuracy_score(y_val, m.predict(x_val)), step=step)
 
 def main() -> None:
-    params = yaml.safe_load(open("params.yaml"))["train"]
+    params = yaml.safe_load(Path("params.yaml").read_text())["train"]
 
     mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000"))
     mlflow.set_experiment(EXPERIMENT)
