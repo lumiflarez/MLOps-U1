@@ -7,3 +7,7 @@ train:
   ngram_max: 3
   C: 534.219662410675
   random_seed: 42
+
+gate:
+  metric: accuracy
+  threshold: 0.95
