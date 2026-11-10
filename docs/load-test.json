@@ -1,0 +1,6 @@
+{
+  "requests": 100,
+  "errors": 0,
+  "p95_ms": 12.03,
+  "throughput_rps": 99.3
+}
