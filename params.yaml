@@ -10,4 +10,4 @@ train:
 
 gate:
   metric: accuracy
-  threshold: 0.95
+  threshold: 0.99
