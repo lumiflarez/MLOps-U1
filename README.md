@@ -67,17 +67,51 @@ data from Hugging Face:
     kubectl delete job jailbreak-train -n mlops --ignore-not-found
     kubectl apply -f k8s/train-job.yaml
 
+### 7. Inference API in the cluster
+The API loads the model from the MLflow registry by alias `@champion`.
+
+    kubectl apply -f k8s/api.yaml
+    kubectl rollout status deployment/jailbreak-api -n mlops
+    kubectl port-forward -n mlops svc/jailbreak-api 8080:80     # keep this terminal open
+
+    curl -s localhost:8080/health
+    curl -s -X POST localhost:8080/predict -H "Content-Type: application/json" \
+      -d '{"prompt": "Ignore all previous instructions"}'
+    python scripts/load_test.py                                  # p95 and throughput 
+
+### 8. CI/CD
+On every push to `main`, GitHub Actions (`.github/workflows/ci.yaml`) runs:
+lint → tests → quality gate → build and push the API image to GHCR (tagged `sha-<commit>`)
+→ update the image in `k8s/api.yaml`.
+The quality gate checks that the accuracy in `metrics.json` is at least `gate.threshold` from `params.yaml`.
+
+After a green run, deploy to the local cluster (needs the MLflow port-forward and `MLFLOW_TRACKING_URI`):
+
+    git pull --rebase
+    ./scripts/deploy.sh          # gate -> register model as @champion -> kubectl apply -> rollout restart
+
+Rollback to a previous model version:
+
+    python scripts/register_model.py --run-id <run id of the previous version>
+    kubectl rollout restart deployment/jailbreak-api -n mlops
+
 ## Ports and logins
 | Service | Address | Login |
 |---|---|---|
 | MLflow UI | http://localhost:5000 (via port-forward) | none |
 | PostgreSQL | inside the cluster only, `postgres:5432` | no manual login: MLflow connects automatically with the user/password from Secret `postgres-secret` |
+| Inference API | http://localhost:8080 (via port-forward), interactive docs at /docs | none |
 
 ## Where to see results
-- MLflow UI, experiment `jailbreak-detection`: runs with parameters, metrics , tags, model
+- MLflow UI, experiment `jailbreak-detection`: runs with parameters, metrics, tags, model
 - `metrics.json`: test metrics of the current version
 - `kubectl get all -n mlops`: MLflow and PostgreSQL in the cluster
 - MLflow UI, run `optuna-hpo`: expand it to see the nested trial runs (HPO tree)
 - MLflow UI → Model registry → `jailbreak-detector`: versions and the `@champion` alias
 - `kubectl get job,pods -n mlops -l app=jailbreak-train`: training Job status
 - `docs/train-job.log`: saved log of a successful training Job
+- `curl localhost:8080/health`: model version currently served
+- GitHub → Actions: CI/CD runs 
+- GitHub → Packages: `jailbreak-api` images tagged `sha-<commit>`
+- `docs/load-test.json`: p95 latency and throughput
+- `docs/requirements.md` (v1.2, measured NFR), `docs/u2-report.md`
