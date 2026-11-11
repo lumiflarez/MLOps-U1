@@ -1,0 +1,13 @@
+quality-gate	Run python scripts/check_model_gate.py	﻿2026-11-11T12:36:08.1313348Z ##[group]Run python scripts/check_model_gate.py
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1313969Z ^[[36;1mpython scripts/check_model_gate.py^[[0m
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1358830Z shell: /usr/bin/bash -e {0}
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1358993Z env:
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1359167Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1359420Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1359665Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1359887Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1360111Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1360336Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.1360551Z ##[endgroup]
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.2051213Z FAIL: accuracy=0.9730 < 0.99
+quality-gate	Run python scripts/check_model_gate.py	2026-11-11T12:36:08.2094465Z ##[error]Process completed with exit code 1.
