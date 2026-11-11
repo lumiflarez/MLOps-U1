@@ -33,3 +33,8 @@ All NFR with measured values: `docs/requirements.md` v1.2.
 
 - **Green run** (CI 43022396546): gate passed (accuracy 0.973 ≥ 0.95) → image pushed, manifest updated.
 - **Red run** (CI 43021556181): threshold 0.99 → `FAIL: accuracy=0.9730 < 0.99`, build-push skipped (`docs/red-run.log`).
+
+## Rollback
+
+1. Job-trained model registered as v2 `@champion` + rollout restart → `/health` version 2 (`docs/rollback-1-before.json`).
+2. `@champion` moved back to v1 + rollout restart → `/health` version 1 (`docs/rollback-2-after.json`). Time: 14.7 s.
