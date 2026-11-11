@@ -20,7 +20,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: api
-          image: ghcr.io/lumiflarez/jailbreak-api:sha-7e456d48
+          image: ghcr.io/lumiflarez/jailbreak-api:sha-25032350
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
